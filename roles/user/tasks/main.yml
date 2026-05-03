@@ -1,0 +1,29 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for user
+- name: Créer l'utilisateur {{ ssh_user }}
+  ansible.builtin.user:
+    name: "{{ ssh_user }}"
+    shell: /bin/bash
+    create_home: true
+    state: present
+
+- name: Ajouter {{ ssh_user }} au groupe sudo
+  ansible.builtin.user:
+    name: "{{ ssh_user }}"
+    groups: sudo
+    append: true
+
+- name: Déployer la clé SSH publique
+  ansible.posix.authorized_key:
+    user: "{{ ssh_user }}"
+    key: "{{ ssh_public_key }}"
+    state: present
+    exclusive: true
+
+- name: Autoriser {{ ssh_user }} à utiliser sudo sans mot de passe
+  ansible.builtin.copy:
+    content: "{{ ssh_user }} ALL=(ALL) NOPASSWD:ALL"
+    dest: "/etc/sudoers.d/{{ ssh_user }}"
+    mode: '0440'
+    validate: 'visudo -cf %s'

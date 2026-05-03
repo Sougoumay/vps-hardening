@@ -1,0 +1,12 @@
+ssh_user: xxxxxxxxx
+ssh_port: xxxxx
+ssh_public_key: "{{ lookup('file', './id_rsa.pub') }}"
+
+ufw_allowed_ports:
+  - "80/tcp"
+  - "443/tcp"
+  - "{{ ssh_port }}/tcp"
+
+fail2ban_maxretry: 5
+fail2ban_findtime: "10m"
+fail2ban_bantime: "2h"

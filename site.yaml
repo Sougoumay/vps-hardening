@@ -1,0 +1,10 @@
+---
+- name: Sécurisation du VPS
+  hosts: myvps
+  become: true
+
+  roles:
+    - user
+    - ssh
+    - firewall
+    - fail2ban

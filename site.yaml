@@ -5,6 +5,6 @@
 
   roles:
     - user
-    - ssh
     - firewall
+    - ssh
     - fail2ban

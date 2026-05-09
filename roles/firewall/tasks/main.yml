@@ -17,7 +17,7 @@
     default: allow
     direction: outgoing
 
-- name: Autoriser les portsnécessaires
+- name: Autoriser les ports nécessaires
   community.general.ufw:
     rule: allow
     port: "{{item.split('/')[0]}}"

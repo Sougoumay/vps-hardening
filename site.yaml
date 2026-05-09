@@ -8,3 +8,4 @@
     - firewall
     - ssh
     - fail2ban
+    - docker

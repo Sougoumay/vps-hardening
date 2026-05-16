@@ -13,7 +13,8 @@
     name: "{{ ssh_user }}"
     groups: sudo
     append: true
-
+  
+    
 - name: Déployer la clé SSH publique
   ansible.posix.authorized_key:
     user: "{{ ssh_user }}"
@@ -27,3 +28,34 @@
     dest: "/etc/sudoers.d/{{ ssh_user }}"
     mode: '0440'
     validate: 'visudo -cf %s'
+
+- name: Créer l'utilisateur {{ deploy_user }}
+  ansible.builtin.user:
+    name: "{{ deploy_user }}"
+    shell: /bin/bash
+    create_home: true
+    state: present
+
+- name: Ajouter {{ deploy_user }} au groupe docker
+  ansible.builtin.user:
+    name: "{{ deploy_user }}"
+    groups: docker
+    append: true
+
+- name: Déployer la clé SSH publique de l'utilisateur dédiée
+  ansible.posix.authorized_key:
+    user: "{{ deploy_user }}"
+    key: "{{ deploy_public_key }}"
+    state: present
+    exclusive: true
+
+- name: Créer les dossiers applicatifs
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: directory
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
+    mode: "{{ item.mode }}"
+  loop:
+    - { path: "{{ portfolio_path }}", mode: "0755" }
+    - { path: "{{ houdat_path }}",    mode: "0750" }
